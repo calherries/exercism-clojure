@@ -1,7 +1,7 @@
 (ns robot-name)
 
 (defn random-char []
-  (char (+ 65 (rand-int 26))))
+  (char (rand-nth (range 65 91))))
 
 (def previous-names
   (atom []))
