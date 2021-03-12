@@ -1,7 +1,7 @@
 (ns sublist)
 
 (defn sublist? [a-list b-list]
-  (contains? (set (partition (count a-list) 1 b-list)) a-list))
+  (some? (some #{a-list} (partition (count a-list) 1 b-list))))
 
 (defn classify [list1 list2]
   (condp = (compare (count list1)
