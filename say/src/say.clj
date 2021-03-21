@@ -20,8 +20,7 @@
    16 "sixteen"
    17 "seventeen"
    18 "eighteen"
-   19 "nineteen"
-   })
+   19 "nineteen"})
 
 (def tens
   {2 "twenty"
