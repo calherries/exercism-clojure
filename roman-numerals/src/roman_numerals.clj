@@ -1,4 +1,5 @@
-(ns roman-numerals)
+(ns roman-numerals
+  (:require [vvvvalvalval.supdate.api :as supd :refer [supdate]]))
 
 (def numeral-to-number
   {\I 1
@@ -26,7 +27,8 @@
        (take-while not-empty)
        (map (fn [lst]
               (let [[largest-symbol largest-value] (first lst)
-                    power-of-ten-numerals (filter (comp is-power-of-ten second) (rest lst))]
+                    power-of-ten-numerals (filter (comp is-power-of-ten second)
+                                                  (rest lst))]
                 (->> power-of-ten-numerals
                      (map (fn [[symbol value]]
                             [(str symbol largest-symbol) (- largest-value value)]))
@@ -69,3 +71,5 @@
 (roman-numerals/numerals 911)
 (roman-numerals/numerals 1024)
 (roman-numerals/numerals 3000)
+
+(supdate [1 2 3] [[inc inc inc]])
