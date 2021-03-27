@@ -37,10 +37,10 @@
 
 (defn spiral-cells [n]
   (case n
-    (= n 0) '()
-    (= n 1) '({:row 0
-               :col 0
-               :val 0})
+    1 '()
+    0 '({:row 0
+         :col 0
+         :val 0})
     (let [smaller-spiral-cells         (spiral-cells (- n 2))
           middled-smaller-spiral-cells (map  (fn [cell]
                                                (-> cell
@@ -53,9 +53,9 @@
 (defn square-positions
   [size]
   (partition size (for [row (range size)
-                     col (range size)]
-                 {:row row
-                  :col col})))
+                        col (range size)]
+                    {:row row
+                     :col col})))
 
 ((defn spiral
    [n]
