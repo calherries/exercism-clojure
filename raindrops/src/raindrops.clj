@@ -7,8 +7,33 @@
   (->> [[3 "Pling"]
         [5 "Plang"]
         [7 "Plong"]]
-       (filter #(is-factor num (first %)))
-       (map second)
-       (#(if (empty? %)
+       (filter #(is-factor num (first %))) ;; filtering
+       (map second) ;; mapping
+       (apply str) ;; reducing
+       (#(if (empty? %) ;; replacing
            (str num)
-           (apply str %)))))
+           %))))
+
+;; OR
+(defn convert [num]
+  (or (reduce (fn [res [quotient output]]
+                (if (is-factor num quotient) ;; filtering
+                  (str res output) ;; mapping, then reducing
+                  res))
+              nil
+              [[3 "Pling"]
+               [5 "Plang"]
+               [7 "Plong"]])
+      (str num))) ;; replacing
+
+;; OR
+(defn convert [num]
+  ((reduce (fn [f-acc [quotient output]]
+             (if (is-factor num quotient)
+               (fn [_] (str (f-acc nil) output)) ;; f (nil)
+               f-acc))
+           identity
+           [[3 "Pling"]
+            [5 "Plang"]
+            [7 "Plong"]])
+   (str num)))
