@@ -1,70 +1,47 @@
-(ns spiral-matrix
-  (:require [vvvvalvalval.supdate.api :as supd :refer [supdate]]))
+(ns spiral-matrix)
 
-(defn num-outsides [n]
-  (* 4 (- n 1)))
+(defn straight-line-lengths [size]
+  (let [countdown (range (dec size) 0 -1)]
+    (cons (dec size)
+          (interleave countdown countdown))))
 
-(defn outside-cells [n]
-  (let [[top-left top-right bottom-right bottom-left] (partition (- n 1) (range (num-outsides n)))
-        outside-cells (->> (concat
-                            (map-indexed (fn [idx val]
-                                           {:row 0
-                                            :col idx
-                                            :val val})
-                                         top-left)
-                            (map-indexed (fn [idx val]
-                                           {:row idx
-                                            :col (- n 1)
-                                            :val val})
-                                         top-right)
-                            (map-indexed (fn [idx val]
-                                           {:row (- n 1)
-                                            :col (- n 1 idx)
-                                            :val val})
-                                         bottom-right)
-                            (map-indexed (fn [idx val]
-                                           {:row (- n 1 idx)
-                                            :col 0
-                                            :val val})
-                                         bottom-left)))]
-    outside-cells))
+(defn move-right [[row col]]
+  [row (inc col)])
 
-(defn cells->position-map
-  [cells]
-  (->> cells
-       (map (juxt #(select-keys % [:row :col]) :val))
-       (into {})))
+(defn move-left [[row col]]
+  [row (dec col)])
 
-(defn spiral-cells [n]
-  (case n
-    1 '()
-    0 '({:row 0
-         :col 0
-         :val 0})
-    (let [smaller-spiral-cells         (spiral-cells (- n 2))
-          middled-smaller-spiral-cells (map  (fn [cell]
-                                               (-> cell
-                                                   (update :row inc)
-                                                   (update :col inc)
-                                                   (update :val #(+ % (* 4 (- n 1))))))
-                                             smaller-spiral-cells)]
-      (concat (outside-cells n) middled-smaller-spiral-cells))))
+(defn move-down [[row col]]
+  [(inc row) col])
 
-(defn square-positions
-  [size]
-  (partition size (for [row (range size)
-                        col (range size)]
-                    {:row row
-                     :col col})))
+(defn move-up [[row col]]
+  [(dec row) col])
 
-((defn spiral
-   [n]
-   (supdate
-    (square-positions n)
-    [[#(inc (get (cells->position-map (spiral-cells n))
-                 %))]])))
+(def circular-moves
+  (cycle [move-right move-down move-left move-up]))
 
-(comment
-  ;; this is how supdate works
-  (supdate [[1 2 3] [4 5 6]] [[inc]])
-  (mapv #(mapv inc %) [[1 2 3] [4 5 6]]))
+(defn all-moves [size]
+  (mapcat #(repeat %1 %2)
+          (straight-line-lengths size)
+          circular-moves))
+
+(defn spiral-ordered-coordinates [size]
+  (reductions (fn [current-location move-fn]
+                    (move-fn current-location))
+                  [0 0]
+                  (all-moves size)))
+
+(defn coordinate->value [size]
+  (into {} (map vector
+                (spiral-ordered-coordinates size)
+                (iterate inc 1))))
+
+(defn square [size]
+  (partition size
+             (map (juxt #(quot % size) #(mod % size))
+                  (range (* size size)))))
+
+(defn spiral [size]
+  (mapv #(mapv (coordinate->value size) %) (square size)))
+
+(spiral 5)
