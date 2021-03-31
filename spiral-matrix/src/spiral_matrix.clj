@@ -44,4 +44,5 @@
 (defn spiral [size]
   (mapv #(mapv (coordinate->value size) %) (square size)))
 
-(spiral 5)
+(comment
+  (spiral 5))
