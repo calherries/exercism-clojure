@@ -1,8 +1,11 @@
 (ns atbash-cipher)
 
-(def alphabet (map char (range (int \a) (+ 26 (int \a)))))
+(defn chars [regex]
+  (map #(.charAt % 0) (re-seq regex (apply str (map char (range 0 256))))))
 
-(def numbers (map char (range (int \0) (+ 10 (int \0)))))
+(def alphabet (chars #"[a-z]"))
+
+(def numbers (chars #"[0-9]"))
 
 (defn encode [msg]
   (let [encode-map (apply hash-map (concat (interleave numbers numbers)
@@ -12,6 +15,4 @@
          (keep encode-map)
          (partition-all 5)
          (map (partial apply str))
-         (interpose " ")
-         (apply str)
-         )))
+         (clojure.string/join " "))))
