@@ -1,7 +1,11 @@
 (ns atbash-cipher)
 
 (defn chars [regex]
-  (map #(.charAt % 0) (re-seq regex (apply str (map char (range 0 256))))))
+  (->> (range 0 256)
+       (map char)
+       (apply str)
+       (re-seq regex)
+       (map #(.charAt % 0))))
 
 (def alphabet (chars #"[a-z]"))
 
