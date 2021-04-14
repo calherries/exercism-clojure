@@ -10,4 +10,9 @@
   @account)
 
 (defn update-balance [account amount]
-  (swap! account + amount))
+  (when @account
+    (swap! account + amount)))
+
+(let [account (open-account)
+      add10 #(update-balance account 10)]
+  (pcalls add10 add10 add10 add10 add10))
