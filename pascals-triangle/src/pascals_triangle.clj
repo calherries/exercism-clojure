@@ -1,17 +1,12 @@
 (ns pascals-triangle)
 
-
-(defn row-from-previous [previous]
-  (cons 1 (->> (partition-all 2 1 previous)
-               (map (partial apply +)))))
-
-(comment
-  (map row-from-previous [[1] [1 1] [1 2 1]]))
+(defn step
+  [row]
+  (flatten [1 (map + row (rest row)) 1]))
 
 (def triangle
-  (lazy-seq
-   (cons [1]
-         (map row-from-previous triangle))))
+  (iterate step [1]))
 
-(defn row [n]
+(defn row
+  [n]
   (nth triangle (dec n)))
